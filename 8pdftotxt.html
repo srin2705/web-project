@@ -1,0 +1,126 @@
+<html>
+    <head>
+
+    <title>pdTor - PDF to Word</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            background: url('enough (2).jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 400px;
+            background-color: rgba(12, 119, 119, 0.747);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        .but{
+            position: absolute;
+            bottom:30%;
+            left: 48%;
+            color: white;
+      
+          }
+
+        input[type="file"] {
+            display: block;
+            margin: 0.8rem auto;
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 0.8rem);
+        }
+
+        button {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.6rem 1.2rem;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #219653;
+        }
+
+        #word-output {
+            text-align: center;
+            margin-top: 1rem;
+            color: #27ae60;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://unpkg.com/pdf-parse/dist/pdf-parse.min.js"></script>
+    <script src="https://unpkg.com/file-saver"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>PDF to Word</h2>
+        <input type="file" id="pdf-file" accept=".pdf"><br>
+        <button onclick="pdfToWord()">Convert to Word</button>
+        <div id="word-output"></div>
+    </div>
+    <div class="but">
+        <button><a href="2home.html">Home</a></button></div>
+
+    <script>
+        async function pdfToWord() {
+            const file = document.getElementById('pdf-file').files[0];
+            const outputDiv = document.getElementById('word-output');
+
+            if (!file) {
+                outputDiv.textContent = 'Select a PDF file.';
+                outputDiv.style.color = "red";
+                return;
+            }
+
+            try {
+                const fileBytes = await file.arrayBuffer();
+                const data = await pdfjsLib.getDocument(fileBytes).promise;
+                let text = "";
+
+                for (let i = 1; i <= data.numPages; i++) {
+                    const page = await data.getPage(i);
+                    const content = await page.getTextContent();
+                    content.items.forEach(item => text += item.str + " ");
+                    text += "\n"; // Add new lines between pages
+                }
+
+                const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+                saveAs(blob, "converted.txt");
+
+                outputDiv.textContent = 'PDF converted to TXT!';
+                outputDiv.style.color = "green";
+
+            } catch (error) {
+                console.error("PDF to Word error:", error);
+                outputDiv.textContent = 'Conversion failed.';
+                outputDiv.style.color = "red";
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+</body>
+</html>

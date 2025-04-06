@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Calibri', sans-serif;
+                background: url('enough (5).jpg') no-repeat center center fixed;
+                background-size: cover;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+    
+            .login-container {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px white;
+                text-align: center;
+                width: 300px;
+                transition: transform 0.3s ease-in-out;
+            }
+    
+            .login-container:hover {
+                transform: scale(1.05);
+            }
+    
+            .login-container h1 {
+                color: #fff;
+                margin-bottom: 30px;
+            }
+    
+            .login-container input[type="username"],
+            .login-container input[type="password"],
+            .login-container input[type="email"] {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: none;
+                border-radius: 5px;
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+            }
+    
+            .login-container input[type="checkbox"] {
+                margin-right: 10px;
+            }
+    
+            .login-container label {
+                color: #fff;
+            }
+    
+            .login-container a {
+                color: #000000;
+                text-decoration: none;
+                margin: 10px 0;
+                display: block;
+            }
+    
+            .login-container button {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background: #00ff9d;
+                color: #000;
+                font-size: 16px;
+                cursor: pointer;
+                margin-top: 20px;
+                transition: background-color 0.3s ease;
+            }
+    
+            .login-container button:hover {
+                background: #ddd;
+            }
+    
+            .switch-form {
+                color: #fff;
+                margin-top: 20px;
+                cursor: pointer;
+                text-decoration: underline;
+                transition: color 0.3s ease; /* Transition for color */
+                padding: 8px 12px; /* Add padding for better touch area*/
+                border-radius: 5px; /* Add border radius to make it look like button*/
+                display: inline-block; /* allows padding and border-radius to work correctly */
+            }
+    
+            .switch-form:hover {
+                color: #ccc;
+                background-color: rgba(255,255,255,0.1)
+            }
+        /* ... your CSS ... */
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginForm">
+        <h1>Login Page</h1>
+        <form id="login-form" action="login.php" method="POST" onsubmit="return validateLogin()">
+            <input type="username" id="loginUsername" name="loginUsername" placeholder="Username" required>
+            <div class="error-message" id="loginUsernameError"></div>
+            <input type="password" id="loginPassword" name="loginPassword" placeholder="Password" required>
+            <div class="error-message" id="loginPasswordError"></div>
+            <button type="submit">Log In</button>
+            <div class="links">
+                <a href="#">Forgot Password?</a><br>
+            </div>
+        </form>
+        <p class="switch-form" onclick="showSignup()">Sign Up</p>
+    </div>
+
+    <div class="login-container" id="signupForm" style="display: none;">
+        <h1>Sign Up</h1>
+        <form id="signup-form" action="signup.php" method="POST" onsubmit="return validateSignup()">
+            <input type="username" id="signupUsername" name="signupUsername" placeholder="Username" required>
+            <div class="error-message" id="signupUsernameError"></div>
+            <input type="email" id="signupEmail" name="signupEmail" placeholder="Email" required>
+            <div class="error-message" id="signupEmailError"></div>
+            <input type="password" id="signupPassword" name="signupPassword" placeholder="Password" required>
+            <div class="error-message" id="signupPasswordError"></div>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p class="switch-form" onclick="showLogin()">Log In</p>
+    </div>
+
+    <script>
+        function showSignup() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+            resetLoginErrors();
+        }
+
+        function showLogin() {
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            resetSignupErrors();
+        }
+
+        function resetLoginErrors() {
+            document.getElementById('loginUsernameError').textContent = '';
+            document.getElementById('loginPasswordError').textContent = '';
+        }
+
+        function resetSignupErrors() {
+            document.getElementById('signupUsernameError').textContent = '';
+            document.getElementById('signupEmailError').textContent = '';
+            document.getElementById('signupPasswordError').textContent = '';
+        }
+
+        function validateLogin() {
+            resetLoginErrors();
+            let isValid = true;
+            const usernameInput = document.getElementById('loginUsername').value.trim();
+            const passwordInput = document.getElementById('loginPassword').value;
+
+            if (usernameInput === '') {
+                document.getElementById('loginUsernameError').textContent = 'Username is required.';
+                isValid = false;
+            }
+
+            if (passwordInput === '') {
+                document.getElementById('loginPasswordError').textContent = 'Password is required.';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateSignup() {
+            resetSignupErrors();
+            let isValid = true;
+            const usernameInput = document.getElementById('signupUsername').value.trim();
+            const emailInput = document.getElementById('signupEmail').value.trim();
+            const passwordInput = document.getElementById('signupPassword').value;
+
+            if (usernameInput === '') {
+                document.getElementById('signupUsernameError').textContent = 'Username is required.';
+                isValid = false;
+            } else if (usernameInput.length < 3) {
+                document.getElementById('signupUsernameError').textContent = 'Username must be at least 3 characters long.';
+                isValid = false;
+            }
+
+            if (emailInput === '') {
+                document.getElementById('signupEmailError').textContent = 'Email is required.';
+                isValid = false;
+            } else if (!isValidEmail(emailInput)) {
+                document.getElementById('signupEmailError').textContent = 'Invalid email format.';
+                isValid = false;
+            }
+
+            if (passwordInput === '') {
+                document.getElementById('signupPasswordError').textContent = 'Password is required.';
+                isValid = false;
+            } else if (passwordInput.length < 6) {
+                document.getElementById('signupPasswordError').textContent = 'Password must be at least 6 characters long.';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+</body>
+</html>

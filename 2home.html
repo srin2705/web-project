@@ -1,0 +1,127 @@
+<html>
+<head>
+    
+    <title>pdTor - Your PDF Toolkit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+    <main>
+        <h2>
+            All PDF-Tools in One
+        </h2>
+        <div class="tool-grid">
+            <a href="3create.html" class="tool-card">
+                <img src="1.png" alt="Create PDF">
+                <h3>Create PDF</h3>
+                <p>Generate PDFs from text.</p>
+            </a>
+            <a href="4watermark.html" class="tool-card">
+                <img src="2.webp" alt="Add Watermark">
+                <h3>Add Watermark</h3>
+                <p>Protect PDFs with watermarks.</p>
+            </a>
+            <a href="5compress.html" class="tool-card">
+                <img src="3.png" alt="SCompress PDF">
+                <h3>Compress PDF</h3>X
+                <p>Reduce pdf size.</p>
+            </a>
+            <a href="6split.html" class="tool-card">
+                <img src="4.png" alt="Splitt PDF">
+                <h3>Split PDF</h3>
+                <p>Divide into two PDFs.</p>
+            </a>
+            <a href="7merge.html" class="tool-card">
+                <img src="5.png" alt="Compress PDF">
+                <h3>Merge PDF</h3>
+                <p>combine pdf </p>
+            </a>
+            <a href="8pdftotxt.html" class="tool-card">
+                <img src="6.png" alt="PDF to TXT">
+                <h3>PDF to TXT</h3>
+                <p>Extract text from PDFs.</p>
+            </a>
+        </div>
+    </main>
+
+ 
+
+    <script src="script.js"></script>
+</body>
+<style>
+    h2{
+        position:fixed;
+        margin: 160px;
+        margin-left: 720px;
+        color:white;
+        size: 80px;
+        font-size: 40px;
+        font-family: Verdana;
+    }
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        background-color: #f9f9f9; /* Light grey background */
+        color: #333;
+        background: url('enough (5).jpg') no-repeat center center fixed;
+
+    }
+    
+ 
+    header h1 {
+        margin-bottom: 0.5rem;
+    }
+    
+    main {
+        padding: 2rem;
+    }
+    
+    .tool-grid{
+     
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 2fr)); /* Adjusted card size */
+        gap: 2rem; /* Reduced gap */
+        max-width: 900px; /* Adjusted max width */
+        margin: 250px;
+        margin-left: 450px;
+        position:fixed;
+    }
+    
+    .tool-card {
+        background-color: rgb(7, 182, 124);
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        padding: 1.5rem;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .tool-card:hover {
+        transform: translateY(-30px); /* Subtle hover effect */
+        box-shadow: 0 6px 6px rgba(0, 0, 0, 0.15);
+    }
+    
+    .tool-card img {
+        width: 60px; /* Reduced icon size */
+        margin-bottom: 0.8rem;
+    }
+    
+    .tool-card h3 {
+        margin-bottom: 0.3rem;
+        font-size: 1rem;
+    }
+    
+    .tool-card p {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0.5rem 0;
+    }
+    
+
+</style>
+</html>

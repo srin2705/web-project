@@ -1,0 +1,169 @@
+<html>
+<head>
+
+    <title>pdTor - Split PDF</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            background: url('enough (2).jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 400px;
+            background-color: rgba(12, 119, 119, 0.747);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .but{
+            position: absolute;
+            bottom:20%;
+            left: 48%;
+            color: white;
+      
+          }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            font-size: 1.2rem;
+        }
+
+        input[type="file"], input[type="number"] {
+            display: block;
+            margin: 0.8rem auto;
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 0.8rem);
+        }
+
+        button {
+            display: block;
+            margin: 0.5rem auto;
+            padding: 0.6rem 1.2rem;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #219653;
+        }
+
+        #split-output {
+            text-align: center;
+            margin-top: 1rem;
+            color: #27ae60;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        #download-buttons {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        #download-buttons button {
+          margin-top: 0.5rem;
+        }
+        p{
+            color: white;
+        }
+
+
+    </style>
+    <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+</head>
+<body> <div class="but">
+    <button><a href="2home.html">Home</a></button></div>
+    <div class="container">
+        <h2>Split PDF</h2>
+        <p>Upload file here:</p>
+        <input type="file" id="split-file" accept=".pdf"><br>
+        <input type="number" id="split-page" placeholder="Split After Page"><br>
+        <button onclick="splitPDF()">Split PDF</button>
+        <div id="split-output"></div>
+        <div id="download-buttons">
+            <button id="download-part1">Download Part 1</button>
+            <button id="download-part2">Download Part 2</button>
+        </div>
+    </div>
+    <script>
+        let part1Bytes, part2Bytes;
+    
+        async function splitPDF() {
+            const { PDFDocument } = PDFLib;
+            const file = document.getElementById('split-file').files[0];
+            const splitPageInput = document.getElementById('split-page').value;
+            const outputDiv = document.getElementById('split-output');
+            const downloadButtonsDiv = document.getElementById('download-buttons');
+    
+            if (!file || !splitPageInput) {
+                outputDiv.textContent = 'Select PDF & page.';
+                outputDiv.style.color = "red";
+                return;
+            }
+    
+            const splitPage = parseInt(splitPageInput);
+    
+            if (isNaN(splitPage)) {
+                outputDiv.textContent = 'Invalid page number format.';
+                outputDiv.style.color = "red";
+                return;
+            }
+    
+            try {
+                const fileBytes = await file.arrayBuffer();
+                const pdfDoc = await PDFDocument.load(fileBytes);
+                const totalPages = pdfDoc.getPageCount();
+    
+                if (splitPage >= totalPages || splitPage < 1) {
+                    outputDiv.textContent = 'Page number out of range.';
+                    outputDiv.style.color = "red";
+                    return;
+                }
+    
+                const firstPart = await PDFDocument.create();
+                const firstPartPages = await firstPart.copyPages(pdfDoc, Array.from({ length: splitPage }, (_, i) => i));
+                firstPartPages.forEach(page => firstPart.addPage(page));
+                part1Bytes = await firstPart.save();
+    
+                const secondPart = await PDFDocument.create();
+                const secondPartPages = await secondPart.copyPages(pdfDoc, Array.from({ length: totalPages - splitPage }, (_, i) => i + splitPage));
+                secondPartPages.forEach(page => secondPart.addPage(page));
+                part2Bytes = await secondPart.save();
+    
+                outputDiv.textContent = 'PDF split successfully!';
+                outputDiv.style.color = "green";
+                downloadButtonsDiv.style.display = "flex";
+    
+                document.getElementById('download-part1').onclick = () => download(part1Bytes, 'part1.pdf', 'application/pdf');
+                document.getElementById('download-part2').onclick = () => download(part2Bytes, 'part2.pdf', 'application/pdf');
+    
+            } catch (error) {
+                console.error("Split error:", error);
+                outputDiv.textContent = 'Split failed.';
+                outputDiv.style.color = "red";
+            }
+        }
+    </script>
+    
+</body>
+</html>

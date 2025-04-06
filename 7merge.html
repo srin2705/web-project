@@ -1,0 +1,138 @@
+<html>
+    <head>
+    <title>pdTor - Merge PDF</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            background: url('enough (2).jpg') no-repeat center center fixed;
+            background-size: cover; /* Ensure the background image covers the entire body */
+        }
+        .but{
+            position: absolute;
+            bottom:30%;
+            left: 48%;
+            color: white;
+      
+          }
+
+        .container {
+            width: 80%;
+            max-width: 600px;
+            margin: auto; /* Center the container horizontally */
+            margin-top: 50px; /* Add some top margin */
+            background-color: rgba(12, 119, 119, 0.747);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            align-self: center;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 1.2rem);
+            background-color: #f4f4f4;
+        }
+
+        button {
+            display: block;
+            margin: 1.5rem auto;
+            padding: 0.75rem 1.5rem;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #219653;
+        }
+
+        #merge-output {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        p{
+            color: white;
+        }
+    </style>
+    <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+</head>
+<body>
+    <div class="but">
+        <button><a href="2home.html">Home</a></button></div>
+    <div class="container">
+        <h2>Merge PDF</h2><p>Upload file 1 here:</p>
+        <input type="file" id="merge-file1" accept=".pdf"><br>
+        <p>Upload file 2here:</p>
+        <input type="file" id="merge-file2" accept=".pdf"><br>
+        <button onclick="mergePDF()">Merge PDF</button>
+        <div id="merge-output"></div>
+    </div>
+
+    <script>
+        async function mergePDF() {
+            const { PDFDocument } = PDFLib;
+            const file1 = document.getElementById('merge-file1').files[0];
+            const file2 = document.getElementById('merge-file2').files[0];
+            const outputDiv = document.getElementById('merge-output');
+
+            if (!file1 || !file2) {
+                outputDiv.textContent = 'Please select two PDFs.';
+                outputDiv.style.color = "red";
+                return;
+            }
+
+            try {
+                const file1Bytes = await file1.arrayBuffer();
+                const file2Bytes = await file2.arrayBuffer();
+
+                const pdfDoc1 = await PDFDocument.load(file1Bytes);
+                const pdfDoc2 = await PDFDocument.load(file2Bytes);
+
+                const mergedPdf = await PDFDocument.create();
+
+                const copiedPages1 = await mergedPdf.copyPages(pdfDoc1, pdfDoc1.getPageIndices());
+                copiedPages1.forEach((page) => mergedPdf.addPage(page));
+
+                const copiedPages2 = await mergedPdf.copyPages(pdfDoc2, pdfDoc2.getPageIndices());
+                copiedPages2.forEach((page) => mergedPdf.addPage(page));
+
+                const mergedPdfBytes = await mergedPdf.save();
+                download(mergedPdfBytes, 'merged.pdf', 'application/pdf');
+                outputDiv.textContent = 'PDF merged and downloaded successfully!';
+                outputDiv.style.color = "green";
+            } catch (error) {
+                console.error("Error merging PDFs:", error);
+                outputDiv.textContent = 'An error occurred during merging.';
+                outputDiv.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

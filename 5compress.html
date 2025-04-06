@@ -1,0 +1,135 @@
+<html>
+<head>
+ 
+z5.l;    <title>pdTor - Compress PDF</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            background: url('enough (2).jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .but{
+            position: absolute;
+            bottom:25%;
+            left: 49%;
+            color: white;
+      
+          }
+
+        .container {
+            width: 80%;
+            max-width: 400px;
+            background-color: rgba(12, 119, 119, 0.747);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            font-size: 1.2rem;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 0.8rem auto;
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 0.8rem);
+            background-color: #f4f4f4;
+        }
+
+        button {
+            display: block;
+            margin: 1rem auto;
+            padding: 0.6rem 1.2rem;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #219653;
+        }
+
+        #compress-output {
+            text-align: center;
+            margin-top: 1rem;
+            color: #27ae60;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        p{
+            color: white;
+        }
+    </style>
+    <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+</head>
+<body> <div class="but">
+    <button><a href="2home.html">Home</a></button></div>
+    <div class="container">
+        <h2>Compress PDF</h2>
+        <p>Upload file here:</p>
+        <input type="file" id="compress-file" accept=".pdf"><br>
+        <button onclick="compressPDF()">Compress PDF</button>
+        <div id="compress-output"></div>
+    </div>
+
+    <script>
+        async function compressPDF() {
+            const { PDFDocument } = PDFLib;
+            const file = document.getElementById('compress-file').files[0];
+            const outputDiv = document.getElementById('compress-output');
+
+            if (!file) {
+                outputDiv.textContent = 'Select a PDF file.';
+                outputDiv.style.color = "red";
+                return;
+            }
+
+            try {
+                const fileBytes = await file.arrayBuffer();
+                const originalSize = file.size; // Get original file size
+                const pdfDoc = await PDFDocument.load(fileBytes);
+
+                // PDF-lib does not directly support compression.
+                // This example re-saves the pdf, which *might* reduce size.
+                // For better compression, you'd need a server-side solution or another library.
+                const compressedBytes = await pdfDoc.save();
+                const compressedSize = compressedBytes.length; // Get compressed size
+
+                download(compressedBytes, 'compressed.pdf', 'application/pdf');
+
+                const originalSizeKB = (originalSize / 1024).toFixed(2);
+                const compressedSizeKB = (compressedSize / 1024).toFixed(2);
+
+                outputDiv.innerHTML = `
+                    PDF re-saved. Might be smaller.<br>
+                    Original Size: ${originalSizeKB} KB<br>
+                    Re-saved Size: ${compressedSizeKB} KB
+                `;
+                outputDiv.style.color = "green";
+
+            } catch (error) {
+                console.error("Compress error:", error);
+                outputDiv.textContent = 'Compression failed.';
+                outputDiv.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

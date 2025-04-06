@@ -1,0 +1,162 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+  </head>
+
+  <body>
+    <label for="text" id="input">
+      Enter text for PDF:
+      <textarea id="inputText" rows="40" cols="500" placeholder="enter the text here"></textarea>
+    </label>
+    <button onclick="createPdf()">Create PDF</button>
+    <p class="small" id="pdfStatus"></p>
+    <h1> Create PDF</h1>
+    <div class="but">
+    <button><a href="2home.html">Home</a></button></div>
+
+  </body>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Calibri', sans-serif;
+      background: url('enough (2).jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    p {
+      font-family: helvetica;
+      font-size: 24px;
+      text-align: center;
+      margin: 25px;
+    }
+
+    .small {
+      font-family: helvetica;
+      font-size: 18px;
+      text-align: center;
+      margin: 25px;
+    }
+
+    button {
+      background-color: #008CBA;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      font-size: 16px;
+      border-radius: 100px;
+      box-shadow: inset;
+      margin-bottom: 1px;
+      bottom: 6%;
+      position: absolute;
+
+    }
+    .button:hover{
+      transition-duration: 1s;
+      cursor: pointer;
+    }
+
+    textarea {
+      resize: both;
+      overflow: auto;
+      background-color: rgb(226, 226, 226); 
+      border: 5px solid rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 5px;
+      width: 80%;
+      max-width: 800px; 
+      margin-bottom: 150px;
+      margin-top: 150px;
+    }
+
+    #input {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    h1{
+      align-items: center;
+      margin-top: 50px;
+      position: absolute;
+      top:5%;
+      color: aliceblue;
+      }
+    .but{
+      position: absolute;
+      top: 80px;
+      left: 55%;
+      bottom: 6px;
+      color: white;
+
+    }  </style>
+   
+
+
+  <script>
+    const { PDFDocument, StandardFonts, rgb } = PDFLib;
+
+    async function createPdf() {
+      const inputText = document.getElementById('inputText').value;
+      const pdfStatus = document.getElementById('pdfStatus');
+
+      try {
+        const pdfDoc = await PDFDocument.create();
+        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        let page = pdfDoc.addPage();
+        const { width, height } = page.getSize();
+        const fontSize = 12;
+        const textLines = inputText.split('\n');
+        let y = height - 50;
+        let x = 50;
+
+        for (const line of textLines) {
+          const words = line.split(' ');
+          let currentLine = '';
+
+          for (const word of words) {
+            const testLine = currentLine + (currentLine ? ' ' : '') + word;
+            const textWidth = timesRomanFont.widthOfTextAtSize(testLine, fontSize);
+
+            if (x + textWidth > width - 100) {
+              page.drawText(currentLine, { x, y, size: fontSize, font: timesRomanFont, color: rgb(0, 0, 0) });
+              y -= fontSize * 1.2;
+              x = 50;
+              currentLine = word;
+
+              if (y < 50) {
+                page = pdfDoc.addPage();
+                y = height - 50;
+              }
+            } else {
+              currentLine = testLine;
+            }
+          }
+          page.drawText(currentLine, { x, y, size: fontSize, font: timesRomanFont, color: rgb(0, 0, 0) });
+          y -= fontSize * 1.2;
+          x = 50;
+
+          if (y < 50) {
+            page = pdfDoc.addPage();
+            y = height - 50;
+          }
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        download(pdfBytes, 'user_input_pdf.pdf', 'application/pdf');
+        pdfStatus.textContent = 'PDF created and downloaded successfully!';
+        pdfStatus.style.color = 'green';
+      } catch (error) {
+        console.error('Error creating PDF:', error);
+        pdfStatus.textContent = 'Error creating PDF. Please try again.';
+        pdfStatus.style.color = 'red';
+      }
+    }
+  </script>
+</html>
